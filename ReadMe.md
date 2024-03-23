@@ -6,9 +6,11 @@ This repository contains a basic implementation of an HTTP server using Python's
 
 ## Features
 
-- **HTTP GET Request Handling:** The server can process HTTP GET requests and return a predefined HTML response.
-- **CORS Support:** Implements basic CORS headers to allow cross-origin requests, making it suitable for testing scenarios where CORS might be a concern.
+- **HTTP GET Request Handling:** The server processes HTTP GET requests and returns a predefined HTML response, including CSS and JavaScript files.
+- **Interactive Web Page:** Includes a simple interactive web page with a click counter, demonstrating how to serve static files (HTML, CSS, JavaScript) and handle user interactions.
+- **CORS Support:** Implements basic CORS headers to allow cross-origin requests.
 - **Connection Handling:** Manages client connections, receiving requests, and sending responses using Python's low-level socket API.
+
 
 ## Getting Started
 
