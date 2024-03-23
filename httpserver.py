@@ -1,4 +1,5 @@
 import socket
+import threading
 
 # Define the server address and port
 SERVER_ADDRESS = ("localhost", 8000)
@@ -48,7 +49,6 @@ def start_server():
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server_socket.bind(SERVER_ADDRESS)
     server_socket.listen(1)
-    print(f"Server listening on http://{SERVER_ADDRESS[0]}:{SERVER_ADDRESS[1]}")
 
     try:
         while True:
@@ -57,8 +57,9 @@ def start_server():
             conn, addr = server_socket.accept()
             print(f"Connection from {addr}")
 
-            # Handle the client request
-            handle_request(conn, addr)
+            # Handle the client request in a new thread
+            client_thread = threading.Thread(target=handle_request, args=(conn, addr))
+            client_thread.start()
 
     except KeyboardInterrupt:
         print("Server stopped")
