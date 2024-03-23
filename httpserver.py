@@ -12,18 +12,18 @@ ALLOWED_ORIGINS = [
 ]  # Allow requests from file:// URLs and the same origin
 
 STATUS_CODE = {
-    200: "HTTP/1.1 200 OK",
-    201: "HTTP/1.1 201 Created",
-    204: "HTTP/1.1 204 No Content",
-    301: "HTTP/1.1 301 Moved Permanently",
-    302: "HTTP/1.1 302 Found",
-    400: "HTTP/1.1 400 Bad Request",
-    401: "HTTP/1.1 401 Unauthorized",
-    403: "HTTP/1.1 403 Forbidden",
-    404: "HTTP/1.1 404 Not Found",
-    405: "HTTP/1.1 405 Method Not Allowed",
-    500: "HTTP/1.1 500 Internal Server Error",
-    503: "HTTP/1.1 503 Service Unavailable",
+    200: "200 OK",
+    201: "201 Created",
+    204: "204 No Content",
+    301: "301 Moved Permanently",
+    302: "302 Found",
+    400: "400 Bad Request",
+    401: "401 Unauthorized",
+    403: "403 Forbidden",
+    404: "404 Not Found",
+    405: "405 Method Not Allowed",
+    500: "500 Internal Server Error",
+    503: "503 Service Unavailable",
 }
 
 # Base directory is the current folder where this script is located
@@ -41,7 +41,7 @@ def handle_request(conn, addr):
 
         # Parse the first line of the request to get the method and path
         request_line = request_data.splitlines()[0]
-        method, path, _ = request_line.split()
+        method, path, http_version = request_line.split()
 
         # Default path to index.html if root is requested
         if path == "/":
@@ -72,7 +72,7 @@ def handle_request(conn, addr):
 
         # Construct the response headers with CORS
         response_headers = [
-            f"{status_code}",
+            f"{http_version} {status_code}",
             f"Content-Type: {content_type}",
             f"Content-Length: {content_length}",
             "Connection: close",
@@ -84,24 +84,26 @@ def handle_request(conn, addr):
         # Combine headers into a single string, add a blank line to separate headers from the body
         response_header_str = "\r\n".join(response_headers) + "\r\n\r\n"
 
-        print(f"Response: {status_code}\n")
+        print(f"Response: {http_version} {status_code}\n")
         # Send the combined response
         conn.sendall(response_header_str.encode() + response_body)
         conn.close()
-    except:
-        print("\n************ EXCEPTION ***********\n")
-        response_body = b"<h1>404 Not Found</h1>"
+    except Exception as e:
+        print(f"\n************ EXCEPTION : {e} ***********\n")
+        response_body = b"<h1>500 Internal Server Error</h1>"
         content_length = len(response_body)
         content_type = "text/html"
+        # Use HTTP/1.1 as a fallback if an exception occurs before HTTP version is determined
         response_headers = [
-            "HTTP/1.1 404 Not Found",
+            "HTTP/1.1 500 Internal Server Error",
             f"Content-Type: {content_type}",
             f"Content-Length: {content_length}",
             "Connection: close",
-            "Access-Control-Allow-Origin: *",  # Allow all origins for simplicity
+            "Access-Control-Allow-Origin: *",
             "Access-Control-Allow-Methods: GET, POST, OPTIONS",
             "Access-Control-Allow-Headers: Content-Type",
         ]
+        response_header_str = "\r\n".join(response_headers) + "\r\n\r\n"
         conn.sendall(response_header_str.encode() + response_body)
         conn.close()
 
