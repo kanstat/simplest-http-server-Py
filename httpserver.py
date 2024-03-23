@@ -15,8 +15,13 @@ def handle_request(conn, addr):
     request_data = conn.recv(1024)
     print("Received request:", request_data.decode())  # For debugging
 
-    # Construct the response body as a byte object
-    response_body = b"<html><body><h1>Hello, World!</h1></body></html>"
+    # Specify the path to the HTML file
+    html_file_path = "index.html"  # Assuming the HTML file is named index.html and is in the same directory
+
+    # Read the content of the HTML file
+    with open(html_file_path, "rb") as file:
+        response_body = file.read()
+
     content_length = len(response_body)
 
     # Construct the response headers with CORS
@@ -43,10 +48,11 @@ def start_server():
     server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     server_socket.bind(SERVER_ADDRESS)
     server_socket.listen(1)
-    print(f"Server listening on {SERVER_ADDRESS[0]}:{SERVER_ADDRESS[1]}")
+    print(f"Server listening on http://{SERVER_ADDRESS[0]}:{SERVER_ADDRESS[1]}")
 
     try:
         while True:
+            print(f"Server listening on http://{SERVER_ADDRESS[0]}:{SERVER_ADDRESS[1]}")
             print("Waiting for a connection...")
             conn, addr = server_socket.accept()
             print(f"Connection from {addr}")
