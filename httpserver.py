@@ -7,6 +7,7 @@ SERVER_ADDRESS = ("localhost", 8000)
 
 # Define the allowed origins for CORS
 ALLOWED_ORIGINS = [
+    "*",
     "http://localhost:8000",
     "null",
 ]  # Allow requests from file:// URLs and the same origin
@@ -99,7 +100,7 @@ def handle_request(conn, addr):
             f"Content-Type: {content_type}",
             f"Content-Length: {content_length}",
             "Connection: close",
-            "Access-Control-Allow-Origin: *",
+            f"Access-Control-Allow-Origin: {ALLOWED_ORIGINS[0]}",
             "Access-Control-Allow-Methods: GET, POST, OPTIONS",
             "Access-Control-Allow-Headers: Content-Type",
         ]
@@ -114,12 +115,15 @@ def start_server():
     server_socket.bind(SERVER_ADDRESS)
     server_socket.listen(5)
     print(f"Server listening on http://{SERVER_ADDRESS[0]}:{SERVER_ADDRESS[1]}")
+
+    # Setting a timeout of 1 second on blocking socket operations (accept() call) to allow for keyboard interrupt (CTRL + c) recognition in the terminal.
     server_socket.settimeout(1)
 
     try:
         print("Waiting for a connection...")
         while True:
             try:
+                # no more a infinitely blocking call, because of server_socket.settimeout(1)
                 conn, addr = server_socket.accept()
                 print(f"Connection from {addr}")
 
