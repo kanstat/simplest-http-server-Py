@@ -3,12 +3,12 @@ import socket
 import threading
 
 # Define the server address and port
-SERVER_ADDRESS = ("localhost", 8000)
+SERVER_ADDRESS = ("localhost", 8800)
 
 # Define the allowed origins for CORS
 ALLOWED_ORIGINS = [
     "*",
-    "http://localhost:8000",
+    "http://localhost:8800",
     "null",
 ]  # Allow requests from file:// URLs and the same origin
 
